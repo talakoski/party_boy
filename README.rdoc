@@ -35,7 +35,7 @@ Add the appropriate mixin to your models:
 
 To allow a model (A) to follow another (B), add acts_as_follow to at least model A. Now, you can follow any other model in your project:
  a = Waterboy.find 1
- b = Quarterback.find 1
+ b = Quarterback.find 2
  a.follow(b)
 
 To stop following, simply just:
