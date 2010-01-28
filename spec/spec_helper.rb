@@ -6,6 +6,7 @@ require 'rubygems'
 require 'spec'
 require 'spec/autorun'
 require 'active_record'
+require "#{File.dirname(__FILE__)}/../generators/socially_active/templates/model"
 require 'models/follower_class'
 require 'models/friend_class'
 

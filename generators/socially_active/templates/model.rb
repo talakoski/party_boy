@@ -2,6 +2,7 @@ class Relationship < ActiveRecord::Base
 
 	named_scope :restricted, :conditions => ['relationships.restricted = ?', true]
 	named_scope :unrestricted, :conditions => ['relationships.restricted = ?', false]
+	
 	named_scope :to_type, lambda {|type| type && {:conditions => ['relationships.requestee_type = ?', type.to_s]} || {}}
 	named_scope :from_type, lambda {|type| type && {:conditions => ['relationships.requestor_type = ?', type.to_s]} || {}}
 	
@@ -14,11 +15,7 @@ class Relationship < ActiveRecord::Base
 	
 	validates_presence_of :requestor, :requestee
 	
-	
-	def blocked?
-		self.restricted
-	end
-	
+	alias_attribute :blocked, :restricted
 	def accepted?
 		!self.restricted
 	end

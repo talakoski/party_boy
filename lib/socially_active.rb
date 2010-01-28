@@ -1,7 +1,8 @@
 module Socially
 	module Active
 		class IdentityTheftError < StandardError; end
-			
+		class StalkerError < StandardError; end
+		
 		def self.included(klazz)
 			klazz.extend(Socially::Active::ClassMethods)
 		end
@@ -63,7 +64,15 @@ module Socially
 			end
 			
 			def follow(something)
-				Relationship.create(:requestor => self, :requestee => something, :restricted => false) if !following?(something)
+				if blocked_by?(something)
+					raise(Socially::Active::StalkerError, "#{super_class_name} #{self.id} has been blocked by #{super_class_name(something)} #{something.id} but is trying to follow them")
+				else
+					Relationship.create(:requestor => self, :requestee => something, :restricted => false) if !(blocked_by?(something) || following?(something))
+				end
+			end
+			
+			def blocked_by?(something)
+				!!(something && Relationship.blocked.count(:conditions => ['requestor_id = ? and requestor_type = ? and requestee_id = ? and requestee_type = ?', self.id, super_class_name, something.id, super_class_name(something)]) > 0)
 			end
 			
 			def unfollow(something)
@@ -71,15 +80,15 @@ module Socially
 			end
 			
 			def block(something)
-				(rel = get_relationship_from(something)) && rel.update_attributes({:restricted => true})
+				(rel = (get_relationship_from(something) || get_relationship_to(something))) && rel.update_attribute(:restricted, true)
 			end
 			
 			def follower_count(type = nil)
-				Relationship.unblocked.from_type(type).size
+				followings.unblocked.from_type(type).size
 			end
 			
 			def following_count(type = nil)
-				Relationship.unblocked.to_type(type).size
+				follows.unblocked.to_type(type).size
 			end
 			
 			def followers(type = nil)
@@ -88,6 +97,10 @@ module Socially
 			
 			def following(type = nil)
 				relationships_to(type).collect{|r| r.requestee}
+			end
+			
+			def extended_network(type = nil)
+				following.collect{|f| f.methods.include?('following') && f.following(type) || []}.flatten.uniq
 			end
 			
 			def method_missing(method, *args)
@@ -119,7 +132,7 @@ module Socially
 			end
 			
 			def extended_network
-				friends.collect{|f| f.methods.include?(:friends) && f.friends || []}.flatten.uniq - [self]
+				friends.collect{|f| f.methods.include?('friends') && f.friends || []}.flatten.uniq - [self]
 			end
 			
 			def outgoing_friend_requests
