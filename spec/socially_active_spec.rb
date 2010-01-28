@@ -117,8 +117,44 @@ describe "SociallyActive -- Follower" do
 	end
 	
 	
+	class User < FollowerClass; end
+	class Business < FollowerClass; end
 	
 	
+	it "should handle STI properly" do 
+		u = User.create
+		b = Business.create
+		
+		u.follow(b)
+		
+		b.followers.first.class.name.should eql('User')
+		u.following.first.class.name.should eql('Business')
+	end
+	
+	it "should handle method_missing properly" do
+		u = User.create
+		b = Business.create
+		u2 = User.create
+		b2 = Business.create
+		
+		u.follow(u2)
+		u.follow(b)
+		u.follow(b2)
+
+		u.following.size.should eql(3)
+		u.following_businesses.size.should eql(2)
+		u.following_users.size.should eql(1)
+		
+		b.follow(u)
+		b.follow(u2)
+		b.follow(b2)
+		
+		b2.followers.size.should eql(2)
+		b2.user_followers.size.should eql(1)
+		b2.business_followers.size.should eql(1)
+		b2.follower_class_followers.size.should eql(2)
+		
+	end
 	
 end
 

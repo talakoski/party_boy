@@ -35,12 +35,28 @@ module Socially
 		module RelateableInstanceMethods
 		
 		private
-		
+			
+			# should be able to pass a class, string, or object and get back the super-most class (before activerecord)
 			def super_class_name(obj = self)
-				if obj.class.superclass != ActiveRecord::Base
-					return obj.class.superclass.name
+				obj = (obj.class == Class && obj || obj.class == String && obj.constantize || obj.class)
+				if obj.superclass != ActiveRecord::Base
+					super_class_name(obj.superclass)
+				else
+					obj.name
 				end
-				return obj.class.name
+			end
+			
+			def super_class_names(obj = self)
+				puts obj
+				if obj.nil?
+					return nil
+				end
+				obj = (obj.class == Class && obj || obj.class == String && obj.constantize || obj.class)
+				if obj.superclass != ActiveRecord::Base
+					[obj.name, super_class_names(obj.superclass)].flatten
+				else
+					[obj.name]
+				end
 			end
 			
 			def get_relationship_to(requestee)
@@ -92,11 +108,28 @@ module Socially
 			end
 			
 			def followers(type = nil)
-				relationships_from(type).collect{|r| r.requestor}
+				type = [type].compact.flatten
+				super_class = type.last
+				exact_class = type.first
+				results = relationships_from(super_class)
+				if super_class != exact_class
+					results.collect{|r| r.requestor.class.name == exact_class && r.requestor || nil}.compact
+				else
+					results.collect{|r| r.requestor}
+				end
+					
 			end
 			
 			def following(type = nil)
-				relationships_to(type).collect{|r| r.requestee}
+				type = [type].flatten.compact	
+				super_class = type.last
+				exact_class = type.first
+				results = relationships_to(super_class)
+				if super_class != exact_class
+					results.collect{|r| r.requestee.class.name == exact_class && r.requestee || nil}.compact
+				else
+					results.collect{|r| r.requestee}
+				end
 			end
 			
 			def extended_network(type = nil)
@@ -104,10 +137,14 @@ module Socially
 			end
 			
 			def method_missing(method, *args)
-				if method.id2name =~ /^(.+)_followers$/
-					followers($1.singularize.classify)
-				elsif method.id2name =~ /^(.+)_following$/
-					following($1.singularize.classify)
+				case method.id2name
+				when /^(.+)ss_followers$/
+					# this is for the rare case of a class name ending in ss, like 'business'; 'business'.classify => 'Busines'
+					followers(super_class_names("#{$1.classify}ss"))
+				when /^(.+)s_followers$/, /^(.+)_followers$/
+					followers(super_class_names($1.classify))
+				when /^following_(.+)$/
+					following(super_class_names($1.classify))
 				else
 					super
 				end

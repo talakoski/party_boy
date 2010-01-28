@@ -12,6 +12,7 @@ ActiveRecord::Schema.define :version => 0 do
 	end
   
 	create_table :follower_classes, :force => true do |t|
+		t.string :type
 		t.timestamps
 	end
 	
