@@ -6,7 +6,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "party_boy"
     gem.summary = "Models relationships between AR models. Allows you to follow, friend, and block other AR's."
-    gem.description = "Models relationships between AR models. Allows you to follow, friend, and block other AR's. Consists of two acts_as: acts_as_followable and acts_as_friend. These options allow an AR to inherit either a twitter-like follower system or a facebook-like friend system."
+    gem.description = "Models relationships between AR models. Allows you to follow, friend, and block other AR's. Consists of two mixins: acts_as_followable and acts_as_friend. These options allow an AR to inherit either a twitter-like follower system or a facebook-like friend system."
     gem.email = "mdnelson30@gmail.com"
     gem.homepage = "http://github.com/mnelson/party_boy"
     gem.authors = ["Mike Nelson"]
