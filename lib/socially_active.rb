@@ -118,8 +118,12 @@ module Socially
 				(outgoing_friendships.accepted + incoming_friendships.accepted).collect{|r| [r.requestor, r.requestee]}.flatten.uniq - [self]
 			end
 			
+			def extended_network
+				friends.collect{|f| f.methods.include?(:friends) && f.friends || []}.flatten.uniq - [self]
+			end
+			
 			def outgoing_friend_requests
-				self.outgo	ing_friendships.unaccepted.all
+				self.outgoing_friendships.unaccepted.all
 			end
 			
 			def incoming_friend_requests
