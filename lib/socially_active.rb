@@ -1,10 +1,14 @@
 module Socially
 	module Active
+		
 		class IdentityTheftError < StandardError; end
 		class StalkerError < StandardError; end
 		
 		def self.included(klazz)
 			klazz.extend(Socially::Active::ClassMethods)
+			klazz.class_eval do 
+				include Socially::Active::RelateableInstanceMethods
+			end
 		end
 		
 		module ClassMethods
@@ -15,7 +19,6 @@ module Socially
 				 klazz.has_many :follows, :as => :requestor
 				end
 				
-				include Socially::Active::RelateableInstanceMethods
 				include Socially::Active::FollowableInstanceMethods
 			end
 			
