@@ -5,9 +5,9 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "socially_active"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "mn@mcaddie.com"
+    gem.summary = "Models relationships between AR models. Allows you to follow, friend, and block other AR's."
+    gem.description = "Models relationships between AR models. Allows you to follow, friend, and block other AR's. Consists of two acts_as: acts_as_followable and acts_as_friend. These options allow an AR to inherit either a twitter-like follower system or a facebook-like friend system."
+    gem.email = "mdnelson30@gmail.com"
     gem.homepage = "http://github.com/mnelson/socially_active"
     gem.authors = ["Mike Nelson"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
