@@ -1,14 +1,14 @@
-= social_lite
+= party_boy
 
 Models relationships between AR models. Allows you to follow, friend, and block other AR's. Consists of two mixins: acts_as_followable and acts_as_friend. These options allow an AR to inherit either a twitter-like follower system or a facebook-like friend system.
 
 == Installation
 
 Install the gem
- gem install social_lite
+ gem install party_boy
 	
 Run the generator
- script/generate social_lite
+ script/generate party_boy
 	
 This will generate a migration file as well as the necessary Relationship class in your models folder.
 
@@ -48,6 +48,24 @@ To find out if there is a relationship between two models, use the methods:
  a.following?(b)
  b.followed_by?(a)
 
+To retrieve a set of models based on the relationships, use:
+ a.following
+ b.followers
+
+==== STI
+
+STI is also handled by party_boy. The relationship is always stored using the super-most class. However, relationships to inheriting classes can also be retrieved. Do so by passing in the type(s):
+
+In string form
+ a.followers('users')
+ a.followers(%w(users companies))
+
+Or in class form
+ a.followers(User)
+ b.followers([User, Company])
+
+Or even though it's rare, in object form
+ a.followers()
 
 ---
 

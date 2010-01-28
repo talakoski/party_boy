@@ -1,4 +1,4 @@
-class SocialLiteMigration < ActiveRecord::Migration
+class PartyBoyMigration < ActiveRecord::Migration
   def self.up
     create_table :relationships do |t|
 			t.references :requestor, :polymorphic => true, :null => false

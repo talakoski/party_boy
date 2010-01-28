@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 
-describe "SocialLite" do
+describe "PartyBoy" do
 	
 	it "should integrate follower methods properly" do
 		%w(followers following following? followed_by?).each do |method|
@@ -32,7 +32,7 @@ describe "SocialLite" do
 	
 end
 
-describe "SocialLite -- Follower" do
+describe "PartyBoy -- Follower" do
 	it "should generate relationships and return proper counts" do
 		a = FollowerClass.create
 		b = FollowerClass.create
@@ -52,7 +52,7 @@ describe "SocialLite -- Follower" do
 		b.follower_count.should eql(1)
 	end
 	
-	it "should generate and destroy relationships from social_lite models" do
+	it "should generate and destroy relationships from party_boy models" do
 		a = FollowerClass.create
 		b = FollowerClass.create
 		
@@ -79,7 +79,7 @@ describe "SocialLite -- Follower" do
 		r.reload
 		r.blocked.should be_true
 		
-		lambda { a.follow(b) }.should raise_error(Social::Lite::StalkerError)
+		lambda { a.follow(b) }.should raise_error(Party::Boy::StalkerError)
 		
 		a.following_count.should eql(0)
 		b.follower_count.should eql(0)

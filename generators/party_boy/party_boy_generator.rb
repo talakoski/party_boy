@@ -1,4 +1,4 @@
-class SocialLiteGenerator < Rails::Generator::Base
+class PartyBoyGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       m.directory "app/models"
@@ -9,6 +9,6 @@ class SocialLiteGenerator < Rails::Generator::Base
   end
   
   def file_name
-    "social_lite_migration"
+    "party_boy_migration"
   end
 end

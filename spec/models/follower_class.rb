@@ -1,5 +1,5 @@
 class FollowerClass < ActiveRecord::Base
-	include Social::Lite
+	include Party::Boy
 	
 	acts_as_followable
 end

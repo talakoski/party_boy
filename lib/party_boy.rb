@@ -1,13 +1,13 @@
-module Social
-	module Lite
+module Party
+	module Boy
 		
 		class IdentityTheftError < StandardError; end
 		class StalkerError < StandardError; end
 		
 		def self.included(klazz)
-			klazz.extend(Social::Lite::ClassMethods)
+			klazz.extend(Party::Boy::ClassMethods)
 			klazz.class_eval do 
-				include Social::Lite::RelateableInstanceMethods
+				include Party::Boy::RelateableInstanceMethods
 			end
 		end
 		
@@ -19,7 +19,7 @@ module Social
 				 klazz.has_many :follows, :as => :requestor
 				end
 				
-				include Social::Lite::FollowableInstanceMethods
+				include Party::Boy::FollowableInstanceMethods
 			end
 			
 			def acts_as_friend
@@ -28,8 +28,8 @@ module Social
 					klazz.has_many :incoming_friendships, :as => :requestee, :include => :requestor
 				end
 				
-				include Social::Lite::RelateableInstanceMethods
-				include Social::Lite::FriendlyInstanceMethods
+				include Party::Boy::RelateableInstanceMethods
+				include Party::Boy::FriendlyInstanceMethods
 			end
 			
 		end
@@ -83,7 +83,7 @@ module Social
 			
 			def follow(something)
 				if blocked_by?(something)
-					raise(Social::Lite::StalkerError, "#{super_class_name} #{self.id} has been blocked by #{super_class_name(something)} #{something.id} but is trying to follow them")
+					raise(Party::Boy::StalkerError, "#{super_class_name} #{self.id} has been blocked by #{super_class_name(something)} #{something.id} but is trying to follow them")
 				else
 					Relationship.create(:requestor => self, :requestee => something, :restricted => false) if !(blocked_by?(something) || following?(something))
 				end
@@ -110,7 +110,7 @@ module Social
 			end
 			
 			def followers(type = nil)
-				type = [type].compact.flatten
+				type = [type].flatten.compact.uniq
 				super_class = type.last
 				exact_class = type.first
 				results = relationships_from(super_class)
@@ -123,7 +123,7 @@ module Social
 			end
 			
 			def following(type = nil)
-				type = [type].flatten.compact	
+				type = [type].flatten.compact.uniq
 				super_class = type.last
 				exact_class = type.first
 				results = relationships_to(super_class)
@@ -213,7 +213,7 @@ module Social
 		
 			def relationship_from(friendship_or_something)
 				if friendship_or_something && friendship_or_something.class == Relationship
-					raise(Social::Lite::IdentityTheftError, "#{self.class.name} with id of #{self.id} tried to access Relationship #{friendship_or_something.id}") if 	!(friendship_or_something.requestor == self || friendship_or_something.requestee == self)
+					raise(Party::Boy::IdentityTheftError, "#{self.class.name} with id of #{self.id} tried to access Relationship #{friendship_or_something.id}") if 	!(friendship_or_something.requestor == self || friendship_or_something.requestee == self)
 					friendship_or_something
 				else
 					arr = friendship_or_something && [self.id, super_class_name, super_class_name(friendship_or_something), friendship_or_something.id]
