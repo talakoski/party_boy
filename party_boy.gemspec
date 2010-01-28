@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{party_boy}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Nelson"]
@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
      "generators/party_boy/templates/migration.rb",
      "generators/party_boy/templates/model.rb",
      "lib/party_boy.rb",
+     "party_boy.gemspec",
      "social_lite.gemspec",
      "spec/models/follower_class.rb",
      "spec/models/friend_class.rb",
