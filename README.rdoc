@@ -17,13 +17,13 @@ This will generate a migration file as well as the necessary Relationship class 
 === Setup
 
 Add the appropriate mixin to your models:
- class DistantUser < ActiveRecord::Base
+ class Waterboy < ActiveRecord::Base
   ...
   acts_as_followable
   ...
  end
 
- class PersonalUser < ActiveRecord::Base
+ class Quarterback < ActiveRecord::Base
   ...
   acts_as_friend
   ...
@@ -34,8 +34,8 @@ Add the appropriate mixin to your models:
 === acts_as_follower
 
 To allow a model (A) to follow another (B), add acts_as_follow to at least model A. Now, you can follow any other model in your project:
- a = User.find 1
- b = Project.find 1
+ a = Waterboy.find 1
+ b = Quarterback.find 1
  a.follow(b)
 
 To stop following, simply just:
@@ -56,13 +56,17 @@ To retrieve a set of models based on the relationships, use:
 
 STI is also handled by party_boy. The relationship is always stored using the super-most class. However, relationships to inheriting classes can also be retrieved. Do so by passing in the type(s):
 
+ class Quarterback < User; end
+ class Cheerleader < User; end
+ class Waterboy < User; end
+
 In string form
  a.followers('users')
- a.followers(%w(users companies))
+ a.followers(%w(users quarterbacks))
 
 Or in class form
  a.followers(User)
- b.followers([User, Company])
+ b.followers([User, Quarterback, Cheerleader])
 
 Or even though it's rare, in object form
  a.followers()
