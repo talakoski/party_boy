@@ -3,7 +3,7 @@ module Socially
 		class IdentityTheftError < StandardError; end
 			
 		def self.included(klazz)
-			klazz.extend(MNelson::Relationships::ClassMethods)
+			klazz.extend(Socially::Active::ClassMethods)
 		end
 		
 		module ClassMethods
@@ -14,8 +14,8 @@ module Socially
 				 klazz.has_many :follows, :as => :requestor
 				end
 				
-				include MNelson::Relationships::RelateableInstanceMethods
-				include MNelson::Relationships::FollowableInstanceMethods
+				include Socially::Active::RelateableInstanceMethods
+				include Socially::Active::FollowableInstanceMethods
 			end
 			
 			def acts_as_friend
@@ -24,8 +24,8 @@ module Socially
 					klazz.has_many :incoming_friendships, :as => :requestee, :include => :requestor
 				end
 				
-				include MNelson::Relationships::RelateableInstanceMethods
-				include MNelson::Relationships::FriendlyInstanceMethods
+				include Socially::Active::RelateableInstanceMethods
+				include Socially::Active::FriendlyInstanceMethods
 			end
 			
 		end
@@ -157,7 +157,7 @@ module Socially
 		
 			def relationship_from(friendship_or_something)
 				if friendship_or_something && friendship_or_something.class == Relationship
-					raise(MNelson::Relationships::IdentityTheftError, "#{self.class.name} with id of #{self.id} tried to access Relationship #{friendship_or_something.id}") if 	!(friendship_or_something.requestor == self || friendship_or_something.requestee == self)
+					raise(Socially::Active::IdentityTheftError, "#{self.class.name} with id of #{self.id} tried to access Relationship #{friendship_or_something.id}") if 	!(friendship_or_something.requestor == self || friendship_or_something.requestee == self)
 					friendship_or_something
 				else
 					arr = friendship_or_something && [self.id, super_class_name, super_class_name(friendship_or_something), friendship_or_something.id]
