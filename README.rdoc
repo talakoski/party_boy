@@ -62,17 +62,26 @@ STI is also handled by party_boy. The relationship is always stored using the su
 
 In string form
  a.followers('users')
- a.followers(%w(users quarterbacks))
+ a.following(%w(users quarterbacks))
 
 Or in class form
  a.followers(User)
- b.followers([User, Quarterback, Cheerleader])
+ b.following([User, Quarterback, Cheerleader])
 
-Or even though it's rare, in object form
- a.followers()
+==== STI - part deux
+
+On top of accessing relationships through followers / following methods, party_boy will dynamically filter the results based on the combined class name:
+
+ a.quarterback_followers		# returns all followers of type quarterback
+ b.cheerleader_followers		# returns all followers of type cheerleader
+ a.following_quarterbacks		# returns all the quarterbacks 'a' is following
+ b.following_cheerleaders		# returns all the cheerleaders 'b' is following
 
 ---
 
+=== acts_as_friend
+
+Docs coming soon. I don't need it, do you?
 
 
 == Copyright
