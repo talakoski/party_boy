@@ -1,14 +1,14 @@
-= socially_active
+= social_lite
 
 Models relationships between AR models. Allows you to follow, friend, and block other AR's. Consists of two mixins: acts_as_followable and acts_as_friend. These options allow an AR to inherit either a twitter-like follower system or a facebook-like friend system.
 
 == Installation
 
 Install the gem
- gem install socially_active
+ gem install social_lite
 	
 Run the generator
- script/generate socially_active
+ script/generate social_lite
 	
 This will generate a migration file as well as the necessary Relationship class in your models folder.
 
@@ -34,18 +34,24 @@ Add the appropriate mixin to your models:
 === acts_as_follower
 
 To allow a model (A) to follow another (B), add acts_as_follow to at least model A. Now, you can follow any other model in your project:
- u = User.find 1
- p = Project.find 1
- u.follow(p)
+ a = User.find 1
+ b = Project.find 1
+ a.follow(b)
 
 To stop following, simply just:
- u.unfollow(p)
+ a.unfollow(b)
+
+Or to block the relationship:
+ b.block(a)
 
 To find out if there is a relationship between two models, use the methods:
- u.following?(p)
- p.followed_by?(u)
+ a.following?(b)
+ b.followed_by?(a)
+
 
 ---
+
+
 
 == Copyright
 

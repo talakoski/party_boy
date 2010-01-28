@@ -1,13 +1,13 @@
-module Socially
-	module Active
+module Social
+	module Lite
 		
 		class IdentityTheftError < StandardError; end
 		class StalkerError < StandardError; end
 		
 		def self.included(klazz)
-			klazz.extend(Socially::Active::ClassMethods)
+			klazz.extend(Social::Lite::ClassMethods)
 			klazz.class_eval do 
-				include Socially::Active::RelateableInstanceMethods
+				include Social::Lite::RelateableInstanceMethods
 			end
 		end
 		
@@ -19,7 +19,7 @@ module Socially
 				 klazz.has_many :follows, :as => :requestor
 				end
 				
-				include Socially::Active::FollowableInstanceMethods
+				include Social::Lite::FollowableInstanceMethods
 			end
 			
 			def acts_as_friend
@@ -28,8 +28,8 @@ module Socially
 					klazz.has_many :incoming_friendships, :as => :requestee, :include => :requestor
 				end
 				
-				include Socially::Active::RelateableInstanceMethods
-				include Socially::Active::FriendlyInstanceMethods
+				include Social::Lite::RelateableInstanceMethods
+				include Social::Lite::FriendlyInstanceMethods
 			end
 			
 		end
@@ -50,7 +50,6 @@ module Socially
 			end
 			
 			def super_class_names(obj = self)
-				puts obj
 				if obj.nil?
 					return nil
 				end
@@ -84,7 +83,7 @@ module Socially
 			
 			def follow(something)
 				if blocked_by?(something)
-					raise(Socially::Active::StalkerError, "#{super_class_name} #{self.id} has been blocked by #{super_class_name(something)} #{something.id} but is trying to follow them")
+					raise(Social::Lite::StalkerError, "#{super_class_name} #{self.id} has been blocked by #{super_class_name(something)} #{something.id} but is trying to follow them")
 				else
 					Relationship.create(:requestor => self, :requestee => something, :restricted => false) if !(blocked_by?(something) || following?(something))
 				end
@@ -214,7 +213,7 @@ module Socially
 		
 			def relationship_from(friendship_or_something)
 				if friendship_or_something && friendship_or_something.class == Relationship
-					raise(Socially::Active::IdentityTheftError, "#{self.class.name} with id of #{self.id} tried to access Relationship #{friendship_or_something.id}") if 	!(friendship_or_something.requestor == self || friendship_or_something.requestee == self)
+					raise(Social::Lite::IdentityTheftError, "#{self.class.name} with id of #{self.id} tried to access Relationship #{friendship_or_something.id}") if 	!(friendship_or_something.requestor == self || friendship_or_something.requestee == self)
 					friendship_or_something
 				else
 					arr = friendship_or_something && [self.id, super_class_name, super_class_name(friendship_or_something), friendship_or_something.id]

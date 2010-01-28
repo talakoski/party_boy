@@ -1,5 +1,5 @@
 class FriendClass < ActiveRecord::Base
-	include Socially::Active
+	include Social::Lite
 	
 	acts_as_friend
 end

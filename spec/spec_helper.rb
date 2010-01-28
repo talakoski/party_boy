@@ -1,12 +1,12 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
-require 'socially_active'
+require 'social_lite'
 require 'rubygems'
 require 'spec'
 require 'spec/autorun'
 require 'active_record'
-require "#{File.dirname(__FILE__)}/../generators/socially_active/templates/model"
+require "#{File.dirname(__FILE__)}/../generators/social_lite/templates/model"
 require 'models/follower_class'
 require 'models/friend_class'
 
