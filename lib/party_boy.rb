@@ -40,26 +40,18 @@ module Party
 		module RelateableInstanceMethods
 		
 		private
-			
+		
 			# should be able to pass a class, string, or object and get back the super-most class (before activerecord)
 			def super_class_name(obj = self)
-				obj = (obj.class == Class && obj || obj.class == String && obj.constantize || obj.class)
+				if obj.nil?
+					return nil
+				end
+				
+				obj = (obj.class == Class && obj || obj.class == String && obj.classify.constantize || obj.class)
 				if obj.superclass != ActiveRecord::Base
 					super_class_name(obj.superclass)
 				else
 					obj.name
-				end
-			end
-			
-			def super_class_names(obj = self)
-				if obj.nil?
-					return nil
-				end
-				obj = (obj.class == Class && obj || obj.class == String && obj.constantize || obj.class)
-				if obj.superclass != ActiveRecord::Base
-					[obj.name, super_class_names(obj.superclass)].flatten
-				else
-					[obj.name]
 				end
 			end
 			
@@ -112,11 +104,10 @@ module Party
 			end
 			
 			def followers(type = nil)
-				type = [type].flatten.compact.uniq
-				super_class = type.last
-				exact_class = type.first
+				super_class = super_class_name(type)
+				exact_class = type && type.to_s.classify
 				results = relationships_from(super_class)
-				if super_class != exact_class
+				if super_class && exact_class && super_class != exact_class
 					results.collect{|r| r.requestor.class.name == exact_class && r.requestor || nil}.compact
 				else
 					results.collect{|r| r.requestor}
@@ -125,11 +116,10 @@ module Party
 			end
 			
 			def following(type = nil)
-				type = [type].flatten.compact.uniq
-				super_class = type.last
-				exact_class = type.first
+				super_class = super_class_name(type)
+				exact_class = type && type.to_s.classify
 				results = relationships_to(super_class)
-				if super_class != exact_class
+				if super_class && exact_class && super_class != exact_class
 					results.collect{|r| r.requestee.class.name == exact_class && r.requestee || nil}.compact
 				else
 					results.collect{|r| r.requestee}
@@ -143,12 +133,11 @@ module Party
 			def method_missing(method, *args)
 				case method.id2name
 				when /^(.+)ss_followers$/
-					# this is for the rare case of a class name ending in ss, like 'business'; 'business'.classify => 'Busines'
-					followers(super_class_names("#{$1.classify}ss"))
+					followers("#{$1}ss".classify)
 				when /^(.+)s_followers$/, /^(.+)_followers$/
-					followers(super_class_names($1.classify))
+					followers($1.classify)
 				when /^following_(.+)$/
-					following(super_class_names($1.classify))
+					following($1.classify)
 				else
 					super
 				end
@@ -222,6 +211,16 @@ module Party
 					arr && Relationship.find(:first, :conditions => [(['(requestor_id = ? AND requestor_type = ? AND requestee_type = ? AND requestee_id = ?)']*2).join(' OR '), arr, arr.reverse].flatten) || nil
 				end
 			end	
+		end
+	end
+end
+
+class String
+	def classify
+		if self[(self.length - 2)...self.length] == 'ss'
+			"#{self[0...(self.length-2)].classify}ss"
+		else
+			super
 		end
 	end
 end

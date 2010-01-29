@@ -126,7 +126,7 @@ describe "PartyBoy -- Follower" do
 	
 	class User < FollowerClass; end
 	class Business < FollowerClass; end
-	
+	class Program < FollowerClass; end
 	
 	it "should handle STI properly" do 
 		u = User.create
@@ -136,6 +136,26 @@ describe "PartyBoy -- Follower" do
 		
 		b.followers.first.class.name.should eql('User')
 		u.following.first.class.name.should eql('Business')
+	end
+	
+	it "should handle passed data types properly" do 
+		u = User.create
+		b = Business.create
+		p = Program.create
+		
+		u.follow(b)
+		u.follow(p)
+		
+		u.following(Business).should eql([b])
+		u.following(Program).should eql([p])
+		u.following.size.should eql(2)
+		
+		u.following('Business').should eql([b])
+		u.following('businesses').should eql([b])
+		u.following('Program').should eql([p])
+		u.following('programs').should eql([p])
+		
+		u.following.size.should eql(2)
 	end
 	
 	it "should handle method_missing properly" do

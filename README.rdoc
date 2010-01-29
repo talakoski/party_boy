@@ -54,7 +54,7 @@ To retrieve a set of models based on the relationships, use:
 
 ==== STI
 
-STI is also handled by party_boy. The relationship is always stored using the super-most class. However, relationships to inheriting classes can also be retrieved. Do so by passing in the type(s):
+STI is also handled by party_boy. The relationship is always stored using the super-most class. However, relationships to inheriting classes can also be retrieved. Do so by passing in the type:
 
  class Quarterback < User; end
  class Cheerleader < User; end
@@ -62,11 +62,14 @@ STI is also handled by party_boy. The relationship is always stored using the su
 
 In string form
  a.followers('users')
- a.following(%w(users quarterbacks))
-
+	=> [#<User id: 1, created_at: "2010-01-27 01:09:42", updated_at: "2010-01-27 01:09:42">]
+ a.following(quarterbacks)
+  => [#<Quarterback id: 3, created_at: "2010-01-27 01:09:42", updated_at: "2010-01-27 01:09:42">]
 Or in class form
  a.followers(User)
- b.following([User, Quarterback, Cheerleader])
+  => [#<User id: 1, created_at: "2010-01-27 01:09:42", updated_at: "2010-01-27 01:09:42">]
+ b.following(Quarterback)
+  => [#<Quarterback id: 3, created_at: "2010-01-27 01:09:42", updated_at: "2010-01-27 01:09:42">]
 
 ==== STI - part deux
 
