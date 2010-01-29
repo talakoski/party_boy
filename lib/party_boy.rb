@@ -173,7 +173,7 @@ module Party
 				self.incoming_friendships.unaccepted.all
 			end
 			
-			def is_friends_with?(something)
+			def friends_with?(something)
 				arr = something && [self.id, super_class_name, super_class_name(something), something.id]
 				arr && Relationship.accepted.count(:conditions => [(['(requestor_id = ? AND requestor_type = ? AND requestee_type = ? AND requestee_id = ?)']*2).join(' OR '), arr, arr.reverse].flatten) > 0
 			end
@@ -190,14 +190,14 @@ module Party
 			
 			def request_friendship(friendship_or_something)
 				rel = relationship_from(friendship_or_something)
-				rel.nil? && Relationship.create(:requestor => self, :requestee => friendship_or_something, :restricted => true) || rel.update_attributes(:restricted => false)
+				rel.nil? && Relationship.create(:requestor => self, :requestee => friendship_or_something, :restricted => true) || (rel.requestee == self && rel.update_attributes(:restricted => false))
 			end
 			
 			def deny_friendship(friendship_or_something)
 				(rel = relationship_from(friendship_or_something)) && rel.destroy
 			end
 			
-			alias_method :reject_friendship, :deny_friendship
+			[:reject_friendship, :destroy_friendship, :leave_friendship].each{|key| alias_method key, :deny_friendship}
 			alias_method :accept_friendship, :request_friendship
 			
 		private
@@ -224,3 +224,5 @@ class String
 		end
 	end
 end
+
+::ActiveRecord::Base.send :include, Party::Boy

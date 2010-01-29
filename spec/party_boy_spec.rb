@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 
-describe "PartyBoy" do
+describe "party_boy" do
 	
 	it "should integrate follower methods properly" do
 		%w(followers following following? followed_by?).each do |method|
@@ -39,7 +39,7 @@ describe "PartyBoy" do
 	
 end
 
-describe "PartyBoy -- Follower" do
+describe "party_boy -- follower" do
 	it "should generate relationships and return proper counts" do
 		a = FollowerClass.create
 		b = FollowerClass.create
@@ -181,6 +181,65 @@ describe "PartyBoy -- Follower" do
 		b2.business_followers.size.should eql(1)
 		b2.follower_class_followers.size.should eql(2)
 		
+	end
+	
+end
+
+
+describe "party_boy - friend" do 
+	
+	it "should make and break friendships properly" do
+		a = FriendClass.create
+		b = FriendClass.create
+		
+		r = a.request_friendship(b)
+		r.accepted?.should be_false
+		
+		b.incoming_friend_requests.size.should eql(1)
+		a.outgoing_friend_requests.size.should eql(1)
+		
+		b.accept_friendship(a)
+		
+		a.friends.should eql([b])
+		b.friends.should eql([a])
+		
+		a.leave_friendship(b)
+		
+		a.friends.empty?.should be_true
+		b.friends.empty?.should be_true
+		
+		a.request_friendship(b)
+		b.request_friendship(a)
+		
+		a.friends.should eql([b])
+		b.friends.should eql([a])
+	end
+	
+	it "should return proper counts and states" do
+		a = FriendClass.new
+		b = FriendClass.new
+		c = FriendClass.new
+		d = FriendClass.new
+		
+		a.request_friendship(b)
+		a.request_friendship(c)
+		b.request_friendship(c)
+		
+		a.pending?(b).should be_true
+		a.pending?(c).should be_true
+		a.pending?(d).should be_false
+		
+		b.accept_friendship(a)
+		c.accept_friendship(a)
+		c.reject_friendship(b)
+		
+		a.friend_count.should eql(2)
+		b.friend_count.should eql(1)
+		c.friend_count.should eql(1)
+		
+		a.friends_with?(b).should be_true
+		c.friends_with?(a).should be_true
+		b.friends_with?(c).should be_false
 	end
 	
 end
