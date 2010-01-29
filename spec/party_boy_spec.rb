@@ -30,6 +30,13 @@ describe "PartyBoy" do
 		r3.should_not be_valid
 	end
 	
+	
+	it "should not allow multiple implementations in one model" do 
+		lambda {
+			require 'models/both_class'
+			}.should raise_error(Party::Boy::TryingTooHardError)
+	end
+	
 end
 
 describe "PartyBoy -- Follower" do

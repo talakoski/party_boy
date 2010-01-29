@@ -16,4 +16,8 @@ ActiveRecord::Schema.define :version => 0 do
 		t.timestamps
 	end
 	
+	create_table :both_classes, :force => true do |t|
+		t.timestamps
+	end
+	
 end

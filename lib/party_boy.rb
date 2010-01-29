@@ -3,6 +3,7 @@ module Party
 		
 		class IdentityTheftError < StandardError; end
 		class StalkerError < StandardError; end
+		class TryingTooHardError < StandardError; end 
 		
 		def self.included(klazz)
 			klazz.extend(Party::Boy::ClassMethods)
@@ -14,6 +15,7 @@ module Party
 		module ClassMethods
 			
 			def acts_as_followable
+				raise(Party::Boy::TryingTooHardError, "Can't implement both acts_as_followable and acts_as_friendly in the same class.") if self.included_modules.include?(Party::Boy::FriendlyInstanceMethods)
 				with_options :class_name => 'Relationship', :dependent => :destroy do |klazz|
 				 klazz.has_many :followings, :as => :requestee
 				 klazz.has_many :follows, :as => :requestor
@@ -23,12 +25,12 @@ module Party
 			end
 			
 			def acts_as_friend
+				raise(Party::Boy::TryingTooHardError, "Can't implement both acts_as_followable and acts_as_friendly in the same class.") if self.included_modules.include?(Party::Boy::FollowableInstanceMethods)
 				with_options :class_name => 'Relationship', :dependent => :destroy do |klazz|
 					klazz.has_many :outgoing_friendships, :as => :requestor, :include => :requestee
 					klazz.has_many :incoming_friendships, :as => :requestee, :include => :requestor
 				end
 				
-				include Party::Boy::RelateableInstanceMethods
 				include Party::Boy::FriendlyInstanceMethods
 			end
 			
