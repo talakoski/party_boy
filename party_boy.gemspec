@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{party_boy}
-  s.version = "0.1.1"
+  s.version = "0.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Nelson"]
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
      "lib/party_boy.rb",
      "party_boy.gemspec",
      "social_lite.gemspec",
+     "spec/models/both_class.rb",
      "spec/models/follower_class.rb",
      "spec/models/friend_class.rb",
      "spec/party_boy_spec.rb",
@@ -42,7 +43,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Models relationships between AR models. Allows you to follow, friend, and block other AR's.}
   s.test_files = [
-    "spec/models/follower_class.rb",
+    "spec/models/both_class.rb",
+     "spec/models/follower_class.rb",
      "spec/models/friend_class.rb",
      "spec/party_boy_spec.rb",
      "spec/schema.rb",
