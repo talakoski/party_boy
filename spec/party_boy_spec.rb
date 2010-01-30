@@ -111,14 +111,16 @@ describe "party_boy -- follower" do
 		a.follow(c)
 		c.follow(d)
 		e.follow(c)
+		e.follow(a)
 		
-		a.followers.empty?.should be_true
+		a.followers.empty?.should be_false
 		a.following.size.should eql(2)
 		a.following.sort{|m,n| m.id <=> n.id}.should eql([b,c])
 		
 		c.followers.size.should eql(3)
 		c.followers.sort{|m,n| m.id <=> n.id}.should eql([a,b,e])
-
+		
+		a.network.sort{|m,n| m.id <=> n.id}.should eql([b,c,e])
 		a.extended_network.include?(d).should be_true
 		a.extended_network.include?(e).should be_false
 	end

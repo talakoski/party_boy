@@ -126,6 +126,10 @@ module Party
 				end
 			end
 			
+			def network(type = nil)
+				[following(type), followers(type)].flatten.uniq
+			end
+			
 			def extended_network(type = nil)
 				following.collect{|f| f.methods.include?('following') && f.following(type) || []}.flatten.uniq
 			end
