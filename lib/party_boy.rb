@@ -131,7 +131,7 @@ module Party
 			end
 			
 			def extended_network(type = nil)
-				following.collect{|f| f.methods.include?('following') && f.following(type) || []}.flatten.uniq
+				network(type).collect{|f| f.methods.include?('network') && f.network(type) || []}.flatten.uniq
 			end
 			
 			def method_missing(method, *args)

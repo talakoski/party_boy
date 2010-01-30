@@ -122,7 +122,7 @@ describe "party_boy -- follower" do
 		
 		a.network.sort{|m,n| m.id <=> n.id}.should eql([b,c,e])
 		a.extended_network.include?(d).should be_true
-		a.extended_network.include?(e).should be_false
+		a.extended_network.include?(e).should be_true
 	end
 	
 	
