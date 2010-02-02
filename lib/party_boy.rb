@@ -78,8 +78,8 @@ module Party
 			def follow(something)
 				if blocked_by?(something)
 					raise(Party::Boy::StalkerError, "#{super_class_name} #{self.id} has been blocked by #{super_class_name(something)} #{something.id} but is trying to follow them")
-				else
-					Relationship.create(:requestor => self, :requestee => something, :restricted => false) if !(blocked_by?(something) || following?(something))
+				elsif !following?(something)
+					Relationship.create(:requestor => self, :requestee => something, :restricted => false)
 				end
 			end
 			
@@ -108,9 +108,9 @@ module Party
 				exact_class = type && type.to_s.classify
 				results = relationships_from(super_class)
 				if super_class && exact_class && super_class != exact_class
-					results.collect{|r| r.requestor.class.name == exact_class && r.requestor || nil}.compact
+					results.collect{|relationship| requestor = relationship.requestor; requestor.class.name == exact_class && requestor || nil}.compact
 				else
-					results.collect{|r| r.requestor}
+					results.collect{|relationship| relationship.requestor}
 				end
 					
 			end
@@ -120,9 +120,9 @@ module Party
 				exact_class = type && type.to_s.classify
 				results = relationships_to(super_class)
 				if super_class && exact_class && super_class != exact_class
-					results.collect{|r| r.requestee.class.name == exact_class && r.requestee || nil}.compact
+					results.collect{|relationship| requestee = relationship.requestee; requestee.class.name == exact_class && requestee || nil}.compact
 				else
-					results.collect{|r| r.requestee}
+					results.collect{|relationship| relationship.requestee}
 				end
 			end
 			
@@ -131,7 +131,7 @@ module Party
 			end
 			
 			def extended_network(type = nil)
-				network(type).collect{|f| f.methods.include?('network') && f.network(type) || []}.flatten.uniq
+				network(type).collect{|friend| friend.methods.include?('network') && friend.network(type) || []}.flatten.uniq
 			end
 			
 			def method_missing(method, *args)
@@ -162,7 +162,7 @@ module Party
 		module FriendlyInstanceMethods
 			
 			def friends
-				(outgoing_friendships.accepted + incoming_friendships.accepted).collect{|r| [r.requestor, r.requestee]}.flatten.uniq - [self]
+				(outgoing_friendships.accepted + incoming_friendships.accepted).collect{|relationship| [relationship.requestor, relationship.requestee]}.flatten.uniq - [self]
 			end
 			
 			def extended_network
@@ -193,8 +193,8 @@ module Party
 			end
 			
 			def request_friendship(friendship_or_something)
-				rel = relationship_from(friendship_or_something)
-				rel.nil? && Relationship.create(:requestor => self, :requestee => friendship_or_something, :restricted => true) || (rel.requestee == self && rel.update_attributes(:restricted => false))
+				relationship = relationship_from(friendship_or_something)
+				relationship.nil? && Relationship.create(:requestor => self, :requestee => friendship_or_something, :restricted => true) || (relationship.requestee == self && relationship.update_attributes(:restricted => false))
 			end
 			
 			def deny_friendship(friendship_or_something)
@@ -208,7 +208,7 @@ module Party
 		
 			def relationship_from(friendship_or_something)
 				if friendship_or_something && friendship_or_something.class == Relationship
-					raise(Party::Boy::IdentityTheftError, "#{self.class.name} with id of #{self.id} tried to access Relationship #{friendship_or_something.id}") if 	!(friendship_or_something.requestor == self || friendship_or_something.requestee == self)
+					raise(Party::Boy::IdentityTheftError, "#{self.class.name} with id of #{self.id} tried to access Relationship #{friendship_or_something.id}") if !(friendship_or_something.requestor == self || friendship_or_something.requestee == self)
 					friendship_or_something
 				else
 					arr = friendship_or_something && [self.id, super_class_name, super_class_name(friendship_or_something), friendship_or_something.id]
