@@ -166,7 +166,7 @@ module Party
 			end
 			
 			def extended_network
-				friends.collect{|f| f.methods.include?('friends') && f.friends || []}.flatten.uniq - [self]
+				friends.collect{|friend| friend.methods.include?('friends') && friend.friends || []}.flatten.uniq - [self]
 			end
 			
 			def outgoing_friend_requests
