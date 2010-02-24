@@ -172,6 +172,7 @@ describe "party_boy -- follower" do
 
 		u.following.size.should eql(3)
 		u.following_businesses.size.should eql(2)
+		u.favorite_businesses.size.should eql(2)
 		u.following_users.size.should eql(1)
 		
 		b.follow(u)

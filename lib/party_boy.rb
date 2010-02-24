@@ -147,6 +147,23 @@ module Party
 				end
 			end
 			
+			def respond_to?(name)
+				if !super(name)
+					case name
+					when /^(.+)ss_followers$/
+						true
+					when /^(.+)s_followers$/, /^(.+)_followers$/
+						true
+					when /^following_(.+)$/
+						true
+					else
+						false
+					end
+				else
+					true
+				end
+			end
+			
 		private
 			
 			def relationships_to(type)
