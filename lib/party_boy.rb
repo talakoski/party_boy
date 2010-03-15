@@ -147,8 +147,8 @@ module Party
 				end
 			end
 			
-			def respond_to?(name)
-				if !super(name)
+			def respond_to?(name, include_private = false)
+				if !super(name, include_private)
 					case name
 					when /^(.+)ss_followers$/
 						true
