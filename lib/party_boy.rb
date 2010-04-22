@@ -48,11 +48,7 @@ module Party
 				end
 				
 				obj = (obj.class == Class && obj || obj.class == String && obj.classify.constantize || obj.class)
-				if obj.superclass != ActiveRecord::Base
-					super_class_name(obj.superclass)
-				else
-					obj.name
-				end
+				obj.base_class.name
 			end
 			
 			def get_relationship_to(requestee)
