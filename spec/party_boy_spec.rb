@@ -127,7 +127,9 @@ describe "party_boy -- follower" do
 	
 	
 	class User < FollowerClass; end
-	class Business < FollowerClass; end
+	class Business < FollowerClass; 
+		has_many :programs
+	end
 	class Program < FollowerClass; end
 	
 	it "should handle STI properly" do 
@@ -184,6 +186,29 @@ describe "party_boy -- follower" do
 		b2.business_followers.size.should eql(1)
 		b2.follower_class_followers.size.should eql(2)
 		
+	end
+	
+	it "should handle includes properly" do 
+		u = User.create
+		b = Business.create
+		b2 = Business.create
+		b3 = Business.create
+		
+		[b,b2,b3].each{|biz| biz.programs.create}
+		
+		u.follow(b)
+		u.follow(b2)
+		u.follow(b3)
+		
+		bizs = u.following_businesses(:programs)
+		bizs.each do |biz|
+			biz.programs.loaded?.should be_true
+		end
+		
+		bizs = u.following_businesses
+		bizs.each do |biz|
+			biz.programs.loaded?.should be_false
+		end
 	end
 	
 end

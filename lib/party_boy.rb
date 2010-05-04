@@ -99,10 +99,10 @@ module Party
 				follows.unblocked.to_type(type).size
 			end
 			
-			def followers(type = nil)
+			def followers(type = nil, includes = {})
 				super_class = super_class_name(type)
 				exact_class = type && type.to_s.classify
-				results = relationships_from(super_class)
+				results = relationships_from(super_class, includes)
 				if super_class && exact_class && super_class != exact_class
 					results.collect{|relationship| requestor = relationship.requestor; requestor.class.name == exact_class && requestor || nil}.compact
 				else
@@ -111,10 +111,10 @@ module Party
 					
 			end
 			
-			def following(type = nil)
+			def following(type = nil, includes = {})
 				super_class = super_class_name(type)
 				exact_class = type && type.to_s.classify
-				results = relationships_to(super_class)
+				results = relationships_to(super_class, includes)
 				if super_class && exact_class && super_class != exact_class
 					results.collect{|relationship| requestee = relationship.requestee; requestee.class.name == exact_class && requestee || nil}.compact
 				else
@@ -131,13 +131,14 @@ module Party
 			end
 			
 			def method_missing(method, *args)
+				includes = args[0] || {}
 				case method.id2name
 				when /^(.+)ss_followers$/
-					followers("#{$1}ss".classify)
+					followers("#{$1}ss".classify, includes)
 				when /^(.+)s_followers$/, /^(.+)_followers$/
-					followers($1.classify)
+					followers($1.classify, includes)
 				when /^following_(.+)$/
-					following($1.classify)
+					following($1.classify, includes)
 				else
 					super
 				end
@@ -162,12 +163,12 @@ module Party
 			
 		private
 			
-			def relationships_to(type)
-				self.follows.unblocked.to_type(type).all(:include => [:requestee])
+			def relationships_to(type, includes = {})
+				self.follows.unblocked.to_type(type).all(:include => [:requestee => includes])
 			end
 			
-			def relationships_from(type)
-				self.followings.unblocked.from_type(type).all(:include => [:requestor])
+			def relationships_from(type, includes = {})
+				self.followings.unblocked.from_type(type).all(:include => [:requestor => includes])
 			end
 			
 		end

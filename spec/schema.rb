@@ -13,6 +13,7 @@ ActiveRecord::Schema.define :version => 0 do
   
 	create_table :follower_classes, :force => true do |t|
 		t.string :type
+		t.integer :business_id # whatever - it works
 		t.timestamps
 	end
 	
