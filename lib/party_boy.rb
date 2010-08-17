@@ -63,6 +63,13 @@ module Party
 		
 		module FollowableInstanceMethods
 		
+		  def self.included(base)
+		    base.class_eval do
+		      alias_method_chain :method_missing, :party_boy
+		      alias_method_chain :respond_to?, :party_boy
+		    end
+		  end
+		
 			def following?(something)
 				!!(something && Relationship.unblocked.count(:conditions => ['requestor_id = ? and requestor_type = ? and requestee_id = ? and requestee_type = ?', self.id, super_class_name, something.id, super_class_name(something)]) > 0)
 			end
@@ -130,9 +137,9 @@ module Party
 				network(type).collect{|friend| friend.methods.include?('network') && friend.network(type) || []}.flatten.uniq
 			end
 			
-			def method_missing(method, *args)
+			def method_missing_with_party_boy(method, *args)
 				includes = args[0] || {}
-				case method.id2name
+				case method.to_s
 				when /^(.+)ss_followers$/
 					followers("#{$1}ss".classify, includes)
 				when /^(.+)s_followers$/, /^(.+)_followers$/
@@ -140,25 +147,21 @@ module Party
 				when /^following_(.+)$/
 					following($1.classify, includes)
 				else
-					super
+					self.method_missing_without_party_boy(method, *args)
 				end
 			end
 			
-			def respond_to?(name, include_private = false)
-				if !super(name, include_private)
-					case name
-					when /^(.+)ss_followers$/
-						true
-					when /^(.+)s_followers$/, /^(.+)_followers$/
-						true
-					when /^following_(.+)$/
-						true
-					else
-						false
-					end
-				else
-					true
-				end
+			def respond_to_with_party_boy?(name, include_private = false)
+			  case name.to_s
+			  when /^(.+)ss_followers$/
+			  	true
+			  when /^(.+)s_followers$/, /^(.+)_followers$/
+			  	true
+			  when /^following_(.+)$/
+			  	true
+			  else
+			  	self.respond_to_without_party_boy?(name, include_private)
+			  end
 			end
 			
 		private

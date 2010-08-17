@@ -63,7 +63,7 @@ STI is also handled by party_boy. The relationship is always stored using the su
 In string form
  a.followers('users')
   => [#<User id: 1, created_at: "2010-01-27 01:09:42", updated_at: "2010-01-27 01:09:42">]
- a.following(quarterbacks)
+ a.following('quarterbacks')
   => [#<Quarterback id: 3, created_at: "2010-01-27 01:09:42", updated_at: "2010-01-27 01:09:42">]
 Or in class form
  a.followers(User)
