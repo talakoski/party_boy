@@ -63,13 +63,6 @@ module Party
 		
 		module FollowableInstanceMethods
 		
-		  def self.included(base)
-		    base.class_eval do
-		      alias_method_chain :method_missing, :party_boy
-		      alias_method_chain :respond_to?, :party_boy
-		    end
-		  end
-		
 			def following?(something)
 				!!(something && Relationship.unblocked.count(:conditions => ['requestor_id = ? and requestor_type = ? and requestee_id = ? and requestee_type = ?', self.id, super_class_name, something.id, super_class_name(something)]) > 0)
 			end
@@ -137,31 +130,27 @@ module Party
 				network(type).collect{|friend| friend.methods.include?('network') && friend.network(type) || []}.flatten.uniq
 			end
 			
-			def method_missing_with_party_boy(method, *args)
-				includes = args[0] || {}
-				case method.to_s
-				when /^(.+)ss_followers$/
-					followers("#{$1}ss".classify, includes)
-				when /^(.+)s_followers$/, /^(.+)_followers$/
-					followers($1.classify, includes)
-				when /^following_(.+)$/
-					following($1.classify, includes)
-				else
-					self.method_missing_without_party_boy(method, *args)
-				end
+			def method_missing(method, *args)
+			  begin
+			    super
+			  rescue NoMethodError, NameError => e
+				  includes = args[0] || {}
+  				case method.to_s
+  				when /^(.+)ss_followers$/
+  					followers("#{$1}ss".classify, includes)
+  				when /^(.+)s_followers$/, /^(.+)_followers$/
+  					followers($1.classify, includes)
+  				when /^following_(.+)$/
+  					following($1.classify, includes)
+  				else
+  					raise e
+  				end
 			end
 			
-			def respond_to_with_party_boy?(name, include_private = false)
-			  case name.to_s
-			  when /^(.+)ss_followers$/
-			  	true
-			  when /^(.+)s_followers$/, /^(.+)_followers$/
-			  	true
-			  when /^following_(.+)$/
-			  	true
-			  else
-			  	self.respond_to_without_party_boy?(name, include_private)
-			  end
+			def respond_to?(name, include_private = false)
+			  return true if super
+			  [/^(.+)ss_followers$/, /^(.+)s_followers$/, /^(.+)_followers$/, /^following_(.+)$/].each{|reg| return true if name.to_s =~ reg}
+			  false
 			end
 			
 		private
