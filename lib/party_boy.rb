@@ -208,6 +208,7 @@ module Party
 				(rel = relationship_from(friendship_or_something)) && rel.destroy
 			end
 			
+			
 			[:reject_friendship, :destroy_friendship, :leave_friendship].each{|key| alias_method key, :deny_friendship}
 			alias_method :accept_friendship, :request_friendship
 			
