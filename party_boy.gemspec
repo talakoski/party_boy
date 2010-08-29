@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{party_boy}
-  s.version = "0.3.0"
+  s.version = "0.3.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Nelson"]
-  s.date = %q{2010-08-17}
+  s.date = %q{2010-08-29}
   s.description = %q{Models relationships between AR models. Allows you to follow, friend, and block other AR's. Consists of two mixins: acts_as_followable and acts_as_friend. These options allow an AR to inherit either a twitter-like follower system or a facebook-like friend system.}
   s.email = %q{mdnelson30@gmail.com}
   s.extra_rdoc_files = [
