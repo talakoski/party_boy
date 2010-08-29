@@ -145,6 +145,7 @@ module Party
   				else
   					raise e
   				end
+  			end
 			end
 			
 			def respond_to?(name, include_private = false)
