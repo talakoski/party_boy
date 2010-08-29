@@ -30,7 +30,7 @@ module Party
 					klazz.has_many :outgoing_friendships, :as => :requestor, :include => :requestee
 					klazz.has_many :incoming_friendships, :as => :requestee, :include => :requestor
 				end
-				
+
 				include Party::Boy::FriendlyInstanceMethods
 			end
 			
@@ -222,6 +222,7 @@ module Party
 					arr && Relationship.find(:first, :conditions => [(['(requestor_id = ? AND requestor_type = ? AND requestee_type = ? AND requestee_id = ?)']*2).join(' OR '), arr, arr.reverse].flatten) || nil
 				end
 			end	
+			
 		end
 	end
 end
