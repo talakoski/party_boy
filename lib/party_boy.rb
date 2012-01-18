@@ -228,14 +228,4 @@ module Party
 	end
 end
 
-class String
-	def classify
-		if self[(self.length - 2)...self.length] == 'ss'
-			"#{self[0...(self.length-2)].classify}ss"
-		else
-			super
-		end
-	end
-end
-
 ::ActiveRecord::Base.send :include, Party::Boy
