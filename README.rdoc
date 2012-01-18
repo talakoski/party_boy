@@ -4,6 +4,8 @@ Models relationships between AR models. Allows you to follow, friend, and block 
 
 == Installation
 
+If you're running rails 2 use gem version 0.3.2 or the rails-2 branch.
+
 Install the gem
  gem install party_boy
 	
