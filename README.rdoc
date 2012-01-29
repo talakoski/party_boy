@@ -10,7 +10,7 @@ Install the gem
  gem install party_boy
 	
 Run the generator
- script/generate party_boy
+ rails generate party_boy
 	
 This will generate a migration file as well as the necessary Relationship class in your models folder.
 
